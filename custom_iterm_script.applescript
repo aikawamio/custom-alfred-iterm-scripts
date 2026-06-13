@@ -34,17 +34,13 @@ end is_processing
 on has_windows()
   if not is_running() then return false
 
-  tell application "iTerm"
-    if windows is {} then return false
-    if current window is missing value then return false
-    if tabs of current window is {} then return false
-    if sessions of current tab of current window is {} then return false
+  try
+    tell application "iTerm" to return current session of current tab of first window is not missing value
+  on error
+    return false
+  end try
 
-    set session_text to contents of current session of current tab of current window
-    if words of session_text is {} then return false
-  end tell
-
-  true
+  return true
 end has_windows
 
 on send_text(custom_text)
